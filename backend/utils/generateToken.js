@@ -12,7 +12,8 @@ export const generateTokenAndSetCookie = (userId, res) => {
     res.cookie("jwt", token, {
         maxAge: 15 * 24 * 60 * 60 * 1000,
         httpOnly: true,// prevent xxs attack cross-site scripting attacks  not accesible by javascripte,
-        sameSite: "strict" // CRSF ATTACK cross-site request forgery attack
+        sameSite: "strict", // CRSF ATTACK cross-site request forgery attack
+        secure: process.env.NODE_ENV !== "development"
     })
 
 
