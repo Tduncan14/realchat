@@ -1,5 +1,6 @@
 import User from "../models/user.models.js"
 import bcrypt from 'bcryptjs'
+import { generateTokenAndSetCookie } from "../utils/generateToken.js"
 
 export const loginUser = async (req, res) => {
 
@@ -49,6 +50,7 @@ export const signup = async (req, res) => {
         if (newUser) {
 
             // generate jwt token
+            generateTokenAndSetCookie(newUser._id, res);
 
 
 
