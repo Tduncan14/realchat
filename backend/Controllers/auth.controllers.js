@@ -1,4 +1,5 @@
-import User from "../models/user.models"
+import User from "../models/user.models.js"
+import bcrypt from 'bcryptjs'
 
 export const loginUser = async (req, res) => {
 
@@ -28,6 +29,9 @@ export const signup = async (req, res) => {
 
         // Hassh pasword her
 
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
         // this is the picture
 
         const boyProfilePic = "oriojeirjew"
@@ -42,14 +46,29 @@ export const signup = async (req, res) => {
         })
 
 
-        await newUser.save()
+        if (newUser) {
 
-        res.status(201).json({
-            _id: newUser._id,
-            fullName: newUser.fullName,
-            username: newUser.username,
-            profilePic: newUser.profilePic
-        })
+            // generate jwt token
+
+
+
+            await newUser.save()
+
+            res.status(201).json({
+                _id: newUser._id,
+                fullName: newUser.fullName,
+                username: newUser.username,
+                profilePic: newUser.profilePic
+            })
+
+        }
+        // 
+
+
+        else {
+            res.status(400).json({ error: "Invalid user data" })
+        }
+
 
     }
 
