@@ -2,6 +2,9 @@ import Conversation from '../models/conversation.model.js'
 import Message from '../models/message.model.js'
 
 
+
+
+
 export const sendMessage = async (req, res) => {
 
     try {
@@ -34,6 +37,16 @@ export const sendMessage = async (req, res) => {
             conversation.message.push(newMessage._id)
         }
 
+        await conversation.save()
+        await newMessage.save()
+
+
+        // socket io functionallity 
+
+
+        // runs at the same time
+        // await Promise.all([conversation.save(), newMessage.save()])
+
 
         res.status(201).json(newMessage)
 
@@ -45,6 +58,33 @@ export const sendMessage = async (req, res) => {
     }
 
 
+}
+
+
+export const getMessages = async (req, res) => {
+
+    try {
+
+        const { id: userToChatId } = req.params
+        const senderId = req.user._id;
+
+
+        const conversation = await Conversation.findOne({
+            participants: { $all: [senderId, userToChatId] }
+        }).populate("message")
+
+
+        res.status(200).json(conversation.messages)
+
+    }
+
+
+
+
+    catch (err) {
+        console.log("Error in getMessages controller", error.message)
+        res.status(500).json({ error: "Interal server error" })
+    }
 
 
 }
